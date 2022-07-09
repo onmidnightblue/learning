@@ -3,8 +3,6 @@
 
 ## hook
 
----
-
 ### 정의
 
 옛날에 함수형 컴포넌트는 화면에 무언가를 출력하기 위해서만 사용되었고, 
@@ -29,8 +27,6 @@ state를 초기화하려면 생성자도 필요하고, 컴포넌트 생명주기
 <br />
 
 ## useState
-
----
 
 ### 문법
 
@@ -154,7 +150,6 @@ export default IngredientList;
 <br />
 
 ## props.children
----
 
 ### to use
 
@@ -187,7 +182,6 @@ const Item = () => {
 
 
 # firebase, fetch, axios
----
 
 ## firebase
 
@@ -338,7 +332,6 @@ const removeIngredientHandler = ingredientId => {
 # useEffect, useCallback
 
 ## useEffect
----
 
 ### 문법
 
@@ -392,7 +385,6 @@ useEffect(() => {
 <br />
 
 ## useCallback
----
 
 ### 문법
 
@@ -543,7 +535,6 @@ export default Search;
 <br />
 
 # loading, error state
----
 
 ### loading, error state를 만들어서 UX 상승시키기
 
@@ -699,7 +690,6 @@ export default ErrorModal;
 <br />
 
 # useReducer
----
 
 ### 문법
 
@@ -870,7 +860,6 @@ export default Ingredients;
 
 
 # useContext
----
 
 ### 전역으로 사용할 상태 설정 설정
 
@@ -965,7 +954,6 @@ ReactDOM.render(
 
 
 # useMemo, React.memo
----
 
 ### React.memo
 
@@ -1115,7 +1103,6 @@ export default Ingredients;
 <br />
 
 # custom hook
----
 
 ### custom hook을 사용하는 이유
 
