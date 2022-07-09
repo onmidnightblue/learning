@@ -1,2 +1,3 @@
 # learning
-react, redux
+- react
+- redux
