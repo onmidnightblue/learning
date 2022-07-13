@@ -1,7 +1,4 @@
-# react hook, useState, props.children
-<br />
-
-## hook
+## :speech_balloon: hook
 
 ### 정의
 
@@ -26,7 +23,7 @@ state를 초기화하려면 생성자도 필요하고, 컴포넌트 생명주기
 <br />
 <br />
 
-## useState
+## :speech_balloon: useState
 
 ### 문법
 
@@ -149,7 +146,7 @@ export default IngredientList;
 <br />
 <br />
 
-## props.children
+## :speech_balloon: props.children
 
 ### to use
 
@@ -181,9 +178,7 @@ const Item = () => {
 <br />
 
 
-# firebase, fetch, axios
-
-## firebase
+## :speech_balloon: firebase
 
 ### 정의
 
@@ -207,7 +202,7 @@ axios.get('https://applestore-1478e-default-rtdb.firebaseio.com/ingredients.json
 <br />
 
 
-## fetch
+## :speech_balloon: fetch
 
 ### get
 
@@ -271,7 +266,7 @@ const removeIngredientHandler = ingredientId => {
 <br />
 <br />
 
-## axios
+## :speech_balloon: axios
 
 ### get
 
@@ -329,9 +324,7 @@ const removeIngredientHandler = ingredientId => {
 <br />
 
 
-# useEffect, useCallback
-
-## useEffect
+## :speech_balloon: useEffect
 
 ### 문법
 
@@ -384,7 +377,7 @@ useEffect(() => {
 <br />
 <br />
 
-## useCallback
+## :speech_balloon: useCallback
 
 ### 문법
 
@@ -533,8 +526,6 @@ export default Search;
     ```
 <br />
 <br />
-
-# loading, error state
 
 ### loading, error state를 만들어서 UX 상승시키기
 
@@ -689,7 +680,7 @@ export default ErrorModal;
 <br />
 <br />
 
-# useReducer
+## :speech_balloon: useReducer
 
 ### 문법
 
@@ -859,7 +850,7 @@ export default Ingredients;
 <br />
 
 
-# useContext
+## :speech_balloon: useContext
 
 ### 전역으로 사용할 상태 설정 설정
 
@@ -953,9 +944,7 @@ ReactDOM.render(
 <br />
 
 
-# useMemo, React.memo
-
-### React.memo
+## :speech_balloon: React.memo
 
 컴포넌트를 감싸서 불필요한 리렌더링을 막는다.
 보고 있는 프로퍼티가 변경되었을 때 다시 렌더링된다.
@@ -970,7 +959,7 @@ const ReactMemo = React.memo(props => {
 컴포넌트 렌더링 과정을 스킵하고 마지막에 렌더링 된 결과를 재사용한다.
 <br />
 
-### useMemo
+## :speech_balloon: useMemo
 
 어떤 데이터든 저장해 컴포넌트가 렌더링 될 때마다 다시 생성되지 않도록 할 수 있다.
 자식 컴포넌트에서 컴포넌트 전체를 감싸 React.memo를 사용하는 방법이 있고,
@@ -1102,7 +1091,7 @@ export default Ingredients;
 <br />
 <br />
 
-# custom hook
+## :speech_balloon: custom hook
 
 ### custom hook을 사용하는 이유
 
