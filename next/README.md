@@ -346,3 +346,475 @@ export default MyApp;
 ```
 
 그냥 import해서 감싸주면 끝
+<br />
+<br />
+
+## :speech_balloon: useEffect으로 해결할 수 없는 사전 렌더링
+
+```jsx
+function HomePage() {
+  const [state, setState] = useState([]);
+
+  useEffect(() => {
+		// fetch data code
+
+    setLoadedMeetups(data);
+  }, []);
+
+  return <MeetupList meetups={loadedMeetups} />;
+}
+
+export default HomePage;
+```
+
+- useEffect으로 http 통신을 사용하면 처음 렌더링 시에는 빈 배열을 가지고, 리렌더링 때 비로소 데이터를 가지게 된다.
+
+nextJS는 이러한 두 번째 렌더링을 기다리지 않고 첫 번째 렌더링 결과만을 가져와서 사전 렌더링한 html 코드를 반환한다.
+
+이렇게 되면 원하지 않는 상황(= 비어있는 html)을 보게 된다.
+<br />
+<br />
+
+## :speech_balloon: 사용할 수 있는 사전 렌더링 방법 2가지
+
+### 정적 렌더링 (getStaticProps())
+
+요청이 서버에 도달했을 때 서버에서 즉각적으로 페이지를 사전 렌더링 하지 않고, 애플리케이션이나 next 프로젝트를 빌드 할 때 사전 렌더링 된다.
+
+배포되고 나면 사전 렌더링한 페이지는 변경되지 않는다.
+
+그래서 **데이터를 업데이트 하는 경우 사전 렌더링한 페이지를 변경하기 위해서 빌드 프로세스를 다시 시작하고, 다시 배포해야 한다.**
+
+페이지 콘텐츠가 매번 바뀌는 경우가 아니면 정적 렌더링도 나쁘지 않다.
+<br />
+
+```jsx
+export function getStaticProps() {
+  // code
+
+	return {
+		props: {}
+	},
+	revalidate: 10
+}
+```
+
+- pages 폴더 안의 컴포넌트에서만 사용 가능하다.
+- next는 이 함수를 발견하게 되면 사전 렌더링 프로세스 중에 이 함수를 실행하게 된다.
+- 이 함수가 적힌 파일 안에서 작성된 컴포넌트 함수를 호출하기 전에 getStaticProps()를 먼저 호출한다.
+- 파일 시스템에 접근할 수도 있고 데이터베이스에 연결할 수도 있다.
+- 항상 return으로 **객체**를 반환하고, 
+일반적으로 **객체를 가진 props 프로퍼티를 설정**한다.
+이 props 객체는 페이지의 컴포넌트가 받는 props 객체가 된다.
+- **revalidate를 설정하면** 점진적 정적 생성이라는 기능을 사용할 수 있다.
+**페이지가 다시 생성될 때까지 next가 대기**하는 시간을 숫자 초 단위로 표시한다.
+이렇게 설정하면 빌드 프로세스 중에 페이지가 바로 생성되지 않고 10초 뒤에 생성된다. 
+이후 10초 마다 서버에서 페이지를 다시 생성한다.
+숫자는 데이터 업데이트 빈도에 따라 결정하면 된다.
+그러면 일부 데이터가 변경되었다고 해도 설정한 간격으로 서버에서 다시 페이지를 재생성 하기 때문에 다시 빌드하고 배포하지 않을 수 있다.
+<br />
+
+```jsx
+export async function getStaticProps() {
+  // code
+}
+```
+
+- 이렇게 비동기도 된다.
+- 이걸 사용하면 next는 데이터를 읽어 들일 때까지 기다린다.
+<br />
+<br />
+
+### 서버 사이드 렌더링 (getServerSideProps())
+
+요청이 들어올 때마다 페이지를 다시 만들어야 하는 경우 페이지를 동적으로 서버에서 재생성해야 한다.
+
+```jsx
+export async function getServerSideProps() {
+	// code
+
+	return {
+		props: {}
+	}
+}
+```
+
+- getStaticProps와 동일하게 객체를 리턴하고, 객체를 가진 props  프로퍼티도 리턴한다.
+- 데이터를 다시 만들고 패치하기 때문에 getStaticProps보다 느릴 수 있다.
+- getStaticProps와의 차이점은 빌드 프로세스 중에 실행되지 않고 요청이 들어올 때마다 실행한다는 것이다.
+- 또한 getStaticProps는 요청과 응답 객체에 접속하지 않지만 getServerSideProps는 접속할 수 있다.
+<br />
+
+```jsx
+export async function getServerSideProps(context) {
+  const req = context.req
+  const res = context.res
+
+  return {
+    props: {
+      meetups: DUMMY_MEETUPS,
+    }
+  }
+}
+```
+
+- context 매개 변수를 받아 요청 객체와 응답 객체에 접근할 수 있다.
+- getStaticProps도 받을 수 있다.
+- props 키는 페이지 컴포넌트 함수를 저장하고 있다.
+- 요청이 들어올 때까지 페이지 생성이 딜레이 된다.
+<br />
+
+항상 바뀌는 데이터가 있는 경우나 요청 객체에 접속할 필요가 있다면 getServerSideProps 
+
+그렇지 않다면 getStaticProps
+<br />
+
+### 동적 페이지에서 사용되는 getStaticPaths()
+
+getStaticProps에서 빌드 프로세스 중에 사전 렌더링될 때, 동적 페이지에서 지원될 모든 id를 알고 있어야 한다.
+
+미리 사전 렌더링하지 않는 id 페이지로 접속하면 404 페이지를 보게 될 것이다.
+
+getStaticPaths는 동적 페이지를 위해 사전 렌더링할 id를 미리 정의하는 역할을 한다.
+<br />
+
+```jsx
+export async function getStaticPaths() {
+  return {
+    fallback: false,
+    paths: [
+      {
+        params: {
+          id: "m1",
+        },
+      },
+      {
+        params: {
+          id: "m2",
+        },
+      },
+    ],
+  };
+}
+```
+
+- fallback는 paths 배열이 모든 매개변수를 저장할지 일부만 저장할지 여부를 정한다.
+    - false : 모든 id value를 저장한다. 사용자가 유효하지 않은 id를 입력하면 404페이지가 뜬다.
+    - true: 들어오는 요청에 관해 서버에서 새로운 페이지를 동적으로 만든다.
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 6e9ea99 (update README.md)
+=======
+>>>>>>> 1872db5 (update README.md)
+    - ‘blocking’이나 true로 작성하면 여기서 지정한 경로 목록이 완전하지 않을 수 있고 더 유효한 페이지가 있을 수 있음을 next에게 알려준다.
+    요청 시 사용자에게 404를 보여주지 않고 페이지를 생성한 후 캐시에 저장한다.
+    true로 설정하면 빈 페이지가 즉시 반환되고 동적으로 생성된 페이지를 풀 다운하기 때문에 따로 페이지에 데이터가 없는 경우를 처리해주어야 한다.
+
+‘blocking’으로 설정하면 페이지가 사전 생성될 때까지 사용자는 이전 페이지 상태에서 머무르게 된다.
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> f036e22 (2022-07-13 next)
+=======
+>>>>>>> 6e9ea99 (update README.md)
+=======
+>>>>>>> 1872db5 (update README.md)
+- 배열을 값으로 가지는 paths에 객체로 params 키를 넣을 수 있다.
+- 실제로는 이렇게 하드코딩하지 않고 데이터 베이스에서 지원되는 id를 패치하거나, api에서 패치한다.
+<br />
+
+```jsx
+export async function getStaticPaths(context) {
+	const meetupId = context.params.meetupId
+
+  return {
+    fallback: boolean,
+    paths: []
+  };
+}
+```
+
+- getStaticPaths 에서도 context를 사용할 수 있다.
+- `context.params.동적페이지를 만들 때 [] 안에 적었던 이름` 이렇게 사용하면 사용자가 meetup/m1 이렇게 입력하는 경우 ‘m1’을 가져올 수 있게 된다.
+<br />
+<br />
+
+## :speech_balloon: 특별한 api 디렉토리와 http 요청
+
+html 코드를 리턴하지 않고 http 요청을 받는다.
+데이터 베이스에 데이터를 저장하고 json을 리턴한다.
+
+여기서 작성하는 코드는 클라이언트 측에서 끝나지 않기 때문에 인증 정보 저장에 안전한 장소이다.
+<br />
+
+### mongoDB
+
+가입 후 새로운 클러스터를 만들고 IP를 등록한 후 사용자를 생성한다.
+
+👉🏻 [자세한 사용 방법](https://www.notion.so/mongoDB-72327274f3834bbaafbbc83a8123a6f7)
+<br />
+
+### 기본적인 메서드와 POST 요청
+
+```jsx
+import { MongoClient } from "mongodb";
+
+async function handler(req, res) {
+  if (req.method === "POST") {
+    const data = req.body;
+    const client = await MongoClient.connect(
+      "mongodb+srv://onmidnightblue:BO3lG2FzxaZkNPkK@cluster0.lfrakmv.mongodb.net/?retryWrites=true&w=majority"
+    );
+    const db = client.db();
+    const meetupsCollection = db.collection("meetups");
+    const result = await meetupsCollection.insertOne(data);
+    console.log(result);
+
+    client.close();
+    res.status(201).json({ message: "success" });
+  }
+}
+
+export default handler;
+```
+
+- `import { MongoClient } from "mongodb";`
+    
+    연결을 가능하게 해준다.
+    
+- `MongoClient.connect()`
+    
+    연결할 url을 매개 변수로 받는다.
+    
+    mongodb+srv://사용자아이디:비밀번호@cluster0.z04291e.mongodb.net/원하는 데이터베이스 이름?retryWrites=true&w=majority
+    
+- `const db = client.db();`
+    
+    ‘원하는 데이터 베이스 이름’에 연결 중인 데이터 베이스를 확보할 수 있다.
+    
+- `const meetupsCollection = db.collection("컬렉션 이름");`
+    
+    여러 문서를 보관하고 있는 컬렉션의 이름을 설정한다.
+    
+- `const result = await meetupsCollection.insertOne(data);`
+    
+    insertOne()은 query 명령 중 하나로, 컬렉션에 새 문서를 삽입할 수 있다.
+    
+- `client.close();`
+    
+    데이터베이스 연결을 차단한다.
+    
+- `res.status(201).json({ message: "success" });`
+    
+    status()로 응답을 호출할 수 있다.
+    
+    201의 경우 성공적으로 되었음을 의미한다.
+    
+    json()으로 발신 응답에 추가될 json 데이터를 작성할 수 있다.
+<br />
+
+### api 디렉토리에서 만든 함수를 사용하는 방법
+
+```jsx
+import NewMeetupForm from "../../components/meetups/NewMeetupForm";
+
+function NewMeetupPage() {
+  async function addMeetupHandler(enteredMeetupData) {
+    const response = await fetch("/api/new-meetup", {
+      method: "POST",
+      body: JSON.stringify(enteredMeetupData),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await response.json();
+  }
+
+  return <NewMeetupForm onAddMeetup={addMeetupHandler} />;
+}
+
+export default NewMeetupPage;
+```
+
+- fetch나 axios를 사용해 url로 옵션을 넣어서 데이터를 요청하면 된다.
+<br />
+
+## :speech_balloon: getStaticProps에서의 http 요청
+getStaticProps는 클라이언트 측에서 완료되지 않기 때문에 여기서 서버와 통신할 아이디/패스워드를 적어도 안전하다.
+
+```jsx
+import { MongoClient } from "mongodb";
+
+import MeetupList from "../components/meetups/MeetupList";
+
+function HomePage(props) {
+  return <MeetupList meetups={props.meetups} />;
+}
+
+export async function getStaticProps() {
+  const client = await MongoClient.connect(
+    "mongodb+srv://onmidnightblue:BO3lG2FzxaZkNPkK@cluster0.lfrakmv.mongodb.net/?retryWrites=true&w=majority"
+  );
+  const db = client.db();
+  const meetupsCollection = db.collection("meetups");
+
+  const meetups = await meetupsCollection.find().toArray();
+  client.close();
+
+  return {
+    props: {
+      meetups: meetups.map((meetup) => ({
+        title: meetup.title,
+        address: meetup.address,
+        image: meetup.image,
+        description: meetup.description,
+        id: meetup._id.toString(),
+      })),
+    },
+    revalidate: 10,
+  };
+}
+
+export default HomePage;
+```
+
+- `const meetups = await meetupsCollection.find().toArray();`
+    
+    find()는 해당하는 컬렉션의 모든 문서를 찾는다.
+    
+    toArray()를 입력하면 자바스크립트 객체 배열을 받을 수 있다.
+<br />
+
+### 동적 페이지에서의 http 요청
+
+```jsx
+import MeetupDetail from "../../components/meetups/MeetupDetail";
+import { MongoClient, ObjectId } from "mongodb";
+
+function MeetupDetails(props) {
+  return (
+    <MeetupDetail
+      image={props.meetupData.image}
+      title={props.meetupData.title}
+      address={props.meetupData.address}
+      description={props.meetupData.description}
+    />
+  );
+}
+
+export async function getStaticPaths() {
+  const client = await MongoClient.connect(
+    "mongodb+srv://onmidnightblue:BO3lG2FzxaZkNPkK@cluster0.lfrakmv.mongodb.net/?retryWrites=true&w=majority"
+  );
+  const db = client.db();
+  const meetupsCollection = db.collection("meetups");
+  const meetups = await meetupsCollection.find({}, { _id: 1 }).toArray();
+  client.close();
+
+  return {
+    fallback: false,
+    paths: meetups.map((meetup) => ({
+      params: { meetupId: meetup._id.toString() },
+    })),
+  };
+}
+
+export async function getStaticProps(context) {
+  const meetupId = context.params.meetupId;
+
+  const client = await MongoClient.connect(
+    "mongodb+srv://onmidnightblue:BO3lG2FzxaZkNPkK@cluster0.lfrakmv.mongodb.net/?retryWrites=true&w=majority"
+  );
+  const db = client.db();
+  const meetupsCollection = db.collection("meetups");
+  const selectedMeetup = await meetupsCollection.findOne({
+    _id: ObjectId(meetupId),
+  });
+  client.close();
+
+  return {
+    props: {
+      meetupData: {
+        id: selectedMeetup._id.toString(),
+        title: selectedMeetup.title,
+        address: selectedMeetup.address,
+        image: selectedMeetup.image,
+        description: selectedMeetup.description,
+      },
+    },
+  };
+}
+
+export default MeetupDetails;
+```
+
+- `const meetups = await meetupsCollection.find({}, { _id: 1 }).toArray();`
+    
+    find() 에서 첫번째 파라미터는 특정 필드값을 필터링할 때 필터 기준을 정의할 수 있다. 빈 객체로 두면 모든 문서를 가져오겠다는 뜻이다.
+    
+    두번째 파라미터는 모든 문서에서 원하는 필드만 가져오겠다는 뜻이며 {_id: 1}로 작성한 것은 _id만 포함하고 다른 필드 값은 포함하지 않는다는 뜻이다.
+    
+- `const selectedMeetup = await meetupsCollection.findOne({ _id: ObjectId(meetupId) });`
+    
+    findOne()는 하나의 문서를 찾는다는 것을 의미하며 어떻게 필터링하고 어떻게 문서를 검색하는지 정의하는 객체를 전달한다. 필드 이름을 키로 전달하고 문서를 반환 받는다.
+    ObjectId()는 mongoDB에서는 _id 값을 암호화하는데, 정확하게 이 _id 값을 찾을 때 사용한다. 자바스크립트 문자열로 변환해주어야 한다.
+
+
+## :speech_balloon: meta tag 추가하는 방법
+
+<img src="https://s3.us-west-2.amazonaws.com/secure.notion-static.com/2c577d64-63b0-4cc0-9f14-5893ef61d367/Untitled.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20220713%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20220713T080143Z&X-Amz-Expires=86400&X-Amz-Signature=250cd3877b10422ec40523362e8e05d47d491afd665e1e38349b8fe4fbe890fe&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%22Untitled.png%22&x-id=GetObject" alt="meta tag" />
+
+### import
+```jsx
+import Head from 'next/head'
+```
+<br />
+
+### 하드코딩으로 설정하기
+
+```jsx
+import Head from 'next/head'
+import MeetupList from "../components/meetups/MeetupList";
+
+function HomePage(props) {
+  return (
+    <>
+      <Head>
+        <title>meetups</title>
+        <meta name='description' content='meetups ! !' />
+      </Head>
+      <MeetupList meetups={props.meetups} />;
+    </>
+  )
+}
+
+export default HomePage;
+```
+
+<br />
+
+### 동적으로 설정하기
+
+```jsx
+import Head from "next/head";
+import MeetupDetail from "../../components/meetups/MeetupDetail";
+
+function MeetupDetails(props) {
+  return (
+    <>
+      <Head>
+        <title>{props.meetupData.title}</title>
+        <meta name="description" content={props.meetupData.description} />
+      </Head>
+      <MeetupDetail
+        title={props.meetupData.title}
+        description={props.meetupData.description}
+      />
+    </>
+  );
+}
+
+export default MeetupDetails;
+```
