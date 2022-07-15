@@ -1,0 +1,18 @@
+.item {
+  margin: 1rem 0;
+  padding: 0.5rem;
+  background-color: #eee;
+  border: 1px solid #ddd;
+  box-sizing: border-box;
+  border-radius: 4px;
+  padding-left: 20px;
+  position: relative;
+}
+
+.item::after {
+  content: 'ㆍ';
+  position: absolute;
+  left: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+}
