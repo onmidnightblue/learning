@@ -1,4 +1,55 @@
-## :speech_balloon: hook
+##### table of contents
+- [hook](#hook)
+  - [정의](#정의)
+  - [종류](#종류)
+- [useState](#usestate)
+  - [문법](#문법)
+  - [사용자에게 데이터 받기](#사용자에게-데이터-받기)
+  - [부모로 데이터를 올려보내기](#부모로-데이터를-올려보내기)
+  - [데이터 가져와서 뿌리기](#데이터-가져와서-뿌리기)
+- [props.children](#propschildren)
+  - [to use](#to-use)
+- [http 통신](#http-통신)
+  - [firebase](#firebase)
+    - [url 매개변수 필터링](#url-매개변수-필터링)
+  - [fetch](#fetch)
+    - [get](#get)
+    - [post](#post)
+    - [delete](#delete)
+  - [axios](#axios)
+    - [get](#get-1)
+    - [post](#post-1)
+    - [delete](#delete-1)
+- [useEffect](#useeffect)
+  - [문법](#문법-1)
+  - [http 통신 무한 루프 막기](#http-통신-무한-루프-막기)
+- [useCallback](#usecallback)
+  - [문법](#문법-2)
+  - [useEffect의 의존성 배열로 인한 무한 루프 막기](#useeffect의-의존성-배열로-인한-무한-루프-막기)
+  - [loading, error state를 만들어서 UX 상승시키기](#loading-error-state를-만들어서-ux-상승시키기)
+  - [error modal](#error-modal)
+- [useReducer](#usereducer)
+  - [문법](#문법-3)
+  - [reducer](#reducer)
+  - [action](#action)
+  - [dispatch](#dispatch)
+  - [전체 코드](#전체-코드)
+- [useContext](#usecontext)
+  - [전역으로 사용할 상태 설정 설정](#전역으로-사용할-상태-설정-설정)
+  - [컴포넌트 감싸기](#컴포넌트-감싸기)
+  - [하위 컴포넌트에서 불러오기](#하위-컴포넌트에서-불러오기)
+- [React.memo](#reactmemo)
+- [useMemo](#usememo)
+  - [최적화하기](#최적화하기)
+  - [useCallback, useReducer, useMemo를 함께 사용해서 최적화하기 (전체 코드)](#usecallback-usereducer-usememo를-함께-사용해서-최적화하기-전체-코드)
+- [custom hook](#custom-hook)
+  - [custom hook을 사용하는 이유](#custom-hook을-사용하는-이유)
+  - [조건 및 특징](#조건-및-특징)
+<br />
+
+
+
+## hook
 
 ### 정의
 
@@ -23,7 +74,7 @@ state를 초기화하려면 생성자도 필요하고, 컴포넌트 생명주기
 <br />
 <br />
 
-## :speech_balloon: useState
+## useState
 
 ### 문법
 
@@ -146,7 +197,7 @@ export default IngredientList;
 <br />
 <br />
 
-## :speech_balloon: props.children
+## props.children
 
 ### to use
 
@@ -177,17 +228,16 @@ const Item = () => {
 <br />
 <br />
 
+## http 통신
 
-## :speech_balloon: firebase
-
-### 정의
+### firebase
 
 - 구글이 만들었고, 테스트용 백엔드로 사용할 수 있다.
 - url을 입력할 때 제일 마지막에 “.json”을 붙여주어야 한다.
 - property 이름으로 ‘name’을 사용한다.
 <br />
 
-### url 매개변수 필터링
+#### url 매개변수 필터링
 
 firebase는 매개변수 필터링을 지원한다.
 
@@ -202,9 +252,9 @@ axios.get('https://applestore-1478e-default-rtdb.firebaseio.com/ingredients.json
 <br />
 
 
-## :speech_balloon: fetch
+### fetch
 
-### get
+#### get
 
 ```jsx
 useEffect(() => {
@@ -225,7 +275,7 @@ useEffect(() => {
 ```
 <br />
 
-### post
+#### post
 
 ```jsx
 const addIngredientHandler = ingredient => {
@@ -247,7 +297,7 @@ const addIngredientHandler = ingredient => {
 ```
 <br />
 
-### delete
+#### delete
 
 ```jsx
 const removeIngredientHandler = ingredientId => {
@@ -266,9 +316,9 @@ const removeIngredientHandler = ingredientId => {
 <br />
 <br />
 
-## :speech_balloon: axios
+### axios
 
-### get
+#### get
 
 ```jsx
 useEffect(() => {
@@ -289,7 +339,7 @@ useEffect(() => {
 ```
 <br />
 
-### post
+#### post
 
 ```jsx
 const addIngredientHandler = ingredient => {
@@ -308,7 +358,7 @@ const addIngredientHandler = ingredient => {
 ```
 <br />
 
-### delete
+#### delete
 
 ```jsx
 const removeIngredientHandler = ingredientId => {
@@ -324,7 +374,7 @@ const removeIngredientHandler = ingredientId => {
 <br />
 
 
-## :speech_balloon: useEffect
+## useEffect
 
 ### 문법
 
@@ -377,7 +427,7 @@ useEffect(() => {
 <br />
 <br />
 
-## :speech_balloon: useCallback
+## useCallback
 
 ### 문법
 
@@ -680,7 +730,7 @@ export default ErrorModal;
 <br />
 <br />
 
-## :speech_balloon: useReducer
+## useReducer
 
 ### 문법
 
@@ -850,7 +900,7 @@ export default Ingredients;
 <br />
 
 
-## :speech_balloon: useContext
+## useContext
 
 ### 전역으로 사용할 상태 설정 설정
 
@@ -944,7 +994,7 @@ ReactDOM.render(
 <br />
 
 
-## :speech_balloon: React.memo
+## React.memo
 
 컴포넌트를 감싸서 불필요한 리렌더링을 막는다.
 보고 있는 프로퍼티가 변경되었을 때 다시 렌더링된다.
@@ -955,11 +1005,10 @@ const ReactMemo = React.memo(props => {
 });
 ```
 
-- props의 변경 여부를 체크하여 이전 props와 동일한 props가 들어온다면 
-컴포넌트 렌더링 과정을 스킵하고 마지막에 렌더링 된 결과를 재사용한다.
+- props의 변경 여부를 체크하여 이전 props와 동일한 props가 들어온다면 컴포넌트 렌더링 과정을 스킵하고 마지막에 렌더링 된 결과를 재사용한다.
 <br />
 
-## :speech_balloon: useMemo
+## useMemo
 
 어떤 데이터든 저장해 컴포넌트가 렌더링 될 때마다 다시 생성되지 않도록 할 수 있다.
 자식 컴포넌트에서 컴포넌트 전체를 감싸 React.memo를 사용하는 방법이 있고,
@@ -1091,7 +1140,7 @@ export default Ingredients;
 <br />
 <br />
 
-## :speech_balloon: custom hook
+## custom hook
 
 ### custom hook을 사용하는 이유
 

@@ -1,4 +1,46 @@
-## :speech_balloon: 왜 써야 할까 ?
+##### table of contents
+- [ 왜 써야 할까 ?](#-speech-balloon-----------)
+  * [서버 사이드 렌더링](#----------)
+  * [파일 기반 라우팅](#---------)
+  * [백엔드 api를 쉽게 추가할 수 있다.](#----api-------------)
+- [ start](#-speech-balloon--start)
+  * [node.js 설치](#nodejs---)
+  * [create next app](#create-next-app)
+  * [폴더 구조](#-----)
+- [ pages](#-speech-balloon--pages)
+  * [index와 서브 페이지 만들기](#index------------)
+  * [중첩 경로 설정하기](#----------)
+  * [동적 페이지 만들기](#----------)
+  * [동적 페이지에서 매개변수를 활용하는 방법](#----------------------)
+  * [navigation 구현하기](#navigation-----)
+- [ Link, router.push(), a tag 차이점](#-speech-balloon--link--routerpush----a-tag----)
+  * [Link](#link)
+  * [a tag](#a-tag)
+  * [router.push()](#routerpush--)
+- [ _app.js에 대하여](#-speech-balloon---appjs-----)
+  * [언제 사용할까 ?](#---------)
+  * [구조](#--)
+  * [전체 컴포넌트의 레이아웃을 한 번에 설정하고 싶을 때](#-----------------------------)
+- [ useEffect으로 해결할 수 없는 사전 렌더링](#-speech-balloon--useeffect------------------)
+- [ 사용할 수 있는 사전 렌더링 방법 2가지](#-speech-balloon---------------------2--)
+  * [정적 렌더링 (getStaticProps())](#--------getstaticprops---)
+  * [서버 사이드 렌더링 (getServerSideProps())](#------------getserversideprops---)
+  * [동적 페이지에서 사용되는 getStaticPaths()](#--------------getstaticpaths--)
+- [ 특별한 api 디렉토리와 http 요청](#-speech-balloon------api-------http---)
+  * [mongoDB](#mongodb)
+  * [기본적인 메서드와 POST 요청](#----------post---)
+  * [api 디렉토리에서 만든 함수를 사용하는 방법](#api----------------------)
+- [ getStaticProps에서의 http 요청](#-speech-balloon--getstaticprops----http---)
+  * [동적 페이지에서의 http 요청](#----------http---)
+- [ meta tag 추가하는 방법](#-speech-balloon--meta-tag--------)
+  * [import](#import)
+  * [하드코딩으로 설정하기](#-----------)
+  * [동적으로 설정하기](#---------)
+
+<br />
+
+
+##  왜 써야 할까 ?
 
 ### 서버 사이드 렌더링
 - react는 클라이언트 사이드 자바스크립트 라이브러리라서 모든 렌더링이 클라이언트 측에서 일어난다.
@@ -25,7 +67,7 @@ next는 페이지 역할을 하는 컴포넌트를 ‘page’라는 별도의 �
 <br />
 <br />
 
-## :speech_balloon: start
+##  start
 
 ### node.js 설치
 
@@ -75,7 +117,7 @@ npx create-next-app
 </aside>
 <br />
 
-## :speech_balloon: pages
+##  pages
 
 ### index와 서브 페이지 만들기
 
@@ -251,7 +293,7 @@ export default NewsPage;
 <br />
 <br />
 
-## :speech_balloon: Link, router.push(), a tag 차이점
+##  Link, router.push(), a tag 차이점
 
 ```jsx
 import Link from "next/link";
@@ -307,7 +349,7 @@ SPA를 유지하기 위해 웬만하면 Link를 사용하고,
 <br />
 <br />
 
-## :speech_balloon: _app.js에 대하여
+##  _app.js에 대하여
 
 ### 언제 사용할까 ?
 pages 폴더 안에 들어있는 특별한 파일로 최상위 컴포넌트처럼 작동한다.
@@ -349,7 +391,7 @@ export default MyApp;
 <br />
 <br />
 
-## :speech_balloon: useEffect으로 해결할 수 없는 사전 렌더링
+##  useEffect으로 해결할 수 없는 사전 렌더링
 
 ```jsx
 function HomePage() {
@@ -375,7 +417,7 @@ nextJS는 이러한 두 번째 렌더링을 기다리지 않고 첫 번째 렌�
 <br />
 <br />
 
-## :speech_balloon: 사용할 수 있는 사전 렌더링 방법 2가지
+##  사용할 수 있는 사전 렌더링 방법 2가지
 
 ### 정적 렌더링 (getStaticProps())
 
@@ -541,7 +583,7 @@ export async function getStaticPaths(context) {
 <br />
 <br />
 
-## :speech_balloon: 특별한 api 디렉토리와 http 요청
+##  특별한 api 디렉토리와 http 요청
 
 html 코드를 리턴하지 않고 http 요청을 받는다.
 데이터 베이스에 데이터를 저장하고 json을 리턴한다.
@@ -641,7 +683,7 @@ export default NewMeetupPage;
 - fetch나 axios를 사용해 url로 옵션을 넣어서 데이터를 요청하면 된다.
 <br />
 
-## :speech_balloon: getStaticProps에서의 http 요청
+##  getStaticProps에서의 http 요청
 getStaticProps는 클라이언트 측에서 완료되지 않기 때문에 여기서 서버와 통신할 아이디/패스워드를 적어도 안전하다.
 
 ```jsx
@@ -762,7 +804,7 @@ export default MeetupDetails;
     ObjectId()는 mongoDB에서는 _id 값을 암호화하는데, 정확하게 이 _id 값을 찾을 때 사용한다. 자바스크립트 문자열로 변환해주어야 한다.
 
 
-## :speech_balloon: meta tag 추가하는 방법
+##  meta tag 추가하는 방법
 
 <img src="https://s3.us-west-2.amazonaws.com/secure.notion-static.com/2c577d64-63b0-4cc0-9f14-5893ef61d367/Untitled.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20220713%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20220713T080143Z&X-Amz-Expires=86400&X-Amz-Signature=250cd3877b10422ec40523362e8e05d47d491afd665e1e38349b8fe4fbe890fe&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%22Untitled.png%22&x-id=GetObject" alt="meta tag" />
 

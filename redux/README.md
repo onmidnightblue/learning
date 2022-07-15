@@ -1,4 +1,30 @@
-## :speech_balloon: 리덕스를 사용하는 이유
+##### table of contents
+- [리덕스를 사용하는 이유](#리덕스를-사용하는-이유)
+- [리덕스를 사용할 때 지켜야 하는 엄격한 규칙](#리덕스를-사용할-때-지켜야-하는-엄격한-규칙)
+- [작동 방식](#작동-방식)
+  - [store](#store)
+  - [component](#component)
+  - [reducer](#reducer)
+  - [action](#action)
+- [설치 및 시작](#설치-및-시작)
+  - [store 생성 및 reducer에서의 action 함수 정의](#store-생성-및-reducer에서의-action-함수-정의)
+  - [store를 react에 제공](#store를-react에-제공)
+  - [component에서 상황에 따라 보낼 action handler 작성](#component에서-상황에-따라-보낼-action-handler-작성)
+- [redux toolkit](#redux-toolkit)
+  - [createSlice](#createslice)
+  - [configureStore](#configurestore)
+  - [component에서 사용](#component에서-사용)
+  - [combineReducer가 아닌 configureStore를 사용하는 이유](#combinereducer가-아닌-configurestore를-사용하는-이유)
+- [redux에서의 http 통신](#redux에서의-http-통신)
+  - [문제점](#문제점)
+  - [해결할 수 있는 두 가지 방법](#해결할-수-있는-두-가지-방법)
+  - [코드를 어디에 두어야 더 효율적인가 ?](#코드를-어디에-두어야-더-효율적인가-)
+  - [작성 방법](#작성-방법)
+  - [thunk](#thunk)
+<br />
+
+
+## 리덕스를 사용하는 이유
 
 대형 애플리케이션을 구축할 때, 전역 상태를 관리하기 위해 context를 사용할 경우 심하게 중첩된 Provider 코드가 생길 수 있다.
 
@@ -24,7 +50,7 @@ return (
 <br />
 <br />
 
-## :speech_balloon: 리덕스를 사용할 때 지켜야 하는 엄격한 규칙
+## 리덕스를 사용할 때 지켜야 하는 엄격한 규칙
 
 - 모든 데이터는 텍스트로 설명되어야 한다.
 - action은 dispatch에 의해 실행되어야 하고 reducer는 항상 같은 출력을 반환해야 한다.
@@ -33,7 +59,7 @@ return (
 <br />
 <br />
 
-## :speech_balloon: 작동 방식
+## 작동 방식
 
 component > action > reducer > store > component
 <br />
@@ -78,7 +104,7 @@ component에서 발송(dispatch)된 사용자의 행동을 reducer에게 전달�
 <br />
 <br />
 
-## :speech_balloon: 설치 및 시작
+## 설치 및 시작
 
 ```jsx
 npm i redux // 리액트 뿐만 아니라 자바스크립트에서 다 사용할 수 있다.
@@ -197,7 +223,7 @@ export default Counter;
 <br />
 <br />
 
-## :speech_balloon: redux toolkit
+## redux toolkit
 
 redux toolkit에는 이미 redux가 포함되어 있기 때문에 프로젝트에 포함시키지 않아도 괜찮다.
 
@@ -327,7 +353,7 @@ export default Counter;
 <br />
 <br />
 
-## :speech_balloon: redux에서의 http 통신
+## redux에서의 http 통신
 
 ### 문제점
 
