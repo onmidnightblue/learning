@@ -45,6 +45,17 @@
 - [custom hook](#custom-hook)
   - [custom hook을 사용하는 이유](#custom-hook을-사용하는-이유)
   - [조건 및 특징](#조건-및-특징)
+- [테스트, jest 사용해보기](#테스트-jest-사용해보기)
+  - [수동적인 테스팅](#수동적인-테스팅)
+  - [자동화된 테스팅](#자동화된-테스팅)
+  - [테스트 방법](#테스트-방법)
+  - [사용할 수 있는 도구와 설정](#사용할-수-있는-도구와-설정)
+  - [App.test.js](#apptestjs)
+  - [setupTests.js](#setuptestsjs)
+  - [package.json](#packagejson)
+  - [하위 컴포넌트의 테스트](#하위-컴포넌트의-테스트)
+  - [비동기 코드의 테스트](#비동기-코드의-테스트)
+  - [가짜 http 요청을 전송해 테스트하기](#가짜-http-요청을-전송해-테스트하기)
 <br />
 
 
@@ -1154,3 +1165,316 @@ export default Ingredients;
 - state와 관련된 모든 훅을 사용할 수 있다.
 - 커스텀 훅을 사용하는 컴포넌트는 커스텀 훅의 코드를 해당 컴포넌트 안에 있는 것처럼 실행할 수 있다.
 - 데이터를 공유하는 것이 아니라 로직을 공유하는 것이다.
+<br />
+<br />
+
+## 테스트, jest 사용해보기
+
+### 수동적인 테스팅
+
+코드를 작성해서 특정 속성을 구현하거나 문제를 해결하고 브라우저에서 확인하는 것을 의미한다. 
+
+수동으로는 가능한 모든 조합과 시나리오를 테스트하기 어렵기 때문에 오류 발생이 일어날 가능성이 크다.
+<br />
+<br />
+
+### 자동화된 테스팅
+
+추가적인 코드를 작성해서 다른 코드를 테스트한다.
+
+- unit Tests (단위 테스트)
+    - 애플리케이션의 가장 작은 단위에 대한 테스트를 작성한다.
+    - 애플리케이션에서 사용하는 개별 함수들을 테스팅한다.
+- integration Tests (통합 테스트)
+    - 여러 개의 구성 요소 조합을 테스트한다.
+- end-to-end Tests(e2e test, 전 구간 테스트)
+    - 전체 워크플로우를 테스트한다.
+    - 사용자가 웹 사이트에서 수행하는 작업을 재현하는 것을 목표로 한다.
+<br />
+<br />
+
+### 테스트 방법
+
+- 무엇을 ?
+    - 서로 다른 기본 구성 요소를 테스트한다.
+- 어떻게 ?
+    - 사용자에게 발생할 수 있는 성공 및 오류 사례를 테스트 한다.
+<br />
+<br />
+
+### 사용할 수 있는 도구와 설정
+
+- 테스팅 코드를 실행하고 결과를 확인하기 위한 도구
+    - jest
+- react 앱과 컴포넌트들의 렌더링 시뮬레이팅
+    - react testing library
+
+이 두 가지 도구는 CRA로 생성한 리액트 앱에서는 이미 설치 및 설정이 되어 있다.
+<br />
+
+<img src="https://s3.us-west-2.amazonaws.com/secure.notion-static.com/86f36d41-8277-4b3c-8a57-35687134b1a2/Untitled.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20220719%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20220719T081648Z&X-Amz-Expires=86400&X-Amz-Signature=763bcd78ad132a5c9e757a6a36ce4ec75d71b4f2d92c7b4f1e9d667696a5a54c&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%22Untitled.png%22&x-id=GetObject">
+
+<img src="https://s3.us-west-2.amazonaws.com/secure.notion-static.com/d690a06c-986a-470e-aa8a-c7f32d5bd683/Untitled.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20220719%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20220719T081704Z&X-Amz-Expires=86400&X-Amz-Signature=8e1f761af2b356008c6829fcb89ac74d4d935e01cffd49dfee1f4190f2f90f4e&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%22Untitled.png%22&x-id=GetObject">
+package.json
+<br />
+<br />
+
+### App.test.js
+
+테스트 코드가 일부 담겨 있으며, 즉시 사용할 수 있다.
+
+App.js를 테스트한다는 의미이다.
+
+다른 파일을 테스트 하고 싶다면 `다른파일.test.js` 이런 식으로 작성하면 된다.
+
+```jsx
+import { render, screen } from '@testing-library/react';
+import App from './App';
+
+test('renders learn react link', () => {
+  render(<App />);
+  const linkElement = screen.getByText(/learn react/i);
+  expect(linkElement).toBeInTheDocument();
+});
+```
+
+- test 함수는 두 개의 인자를 가진다.
+- 첫 번째 인자는 테스트에 대한 설명이고 테스팅 출력 시 테스트를 식별하는 것을 도와준다.
+- 두 번째 인자는 실제 테스트 및 코드를 포함하는 익명 함수다.
+- `/learn react/i` 대소문자 상관없이 App 컴포넌트에서 learn react이라는 텍스트를 가진 element를 찾으면 테스트는 성공한다.
+<br />
+
+```jsx
+test('테스트에 대한 설명', 함수 )
+```
+
+- 테스트 안의 함수를 작성할 땐 일반적으로 세 가지 과정을 거친다.
+    - arrange(준비) > 테스트를 원하는 컴포넌트를 렌더링
+    - act(실행) > 버튼 클릭 등을 시뮬레이션
+    - assert(단언) > 브라우저에서 예상과 같은지 확인
+<br />
+
+```jsx
+import { useState } from "react";
+
+const Greeting = () => {
+  const [changedText, setChangedText] = useState(false);
+
+  const changeTextHandler = () => {
+    setChangedText(true);
+  };
+
+  return (
+    <div>
+      <h3>hello World!</h3>
+      {!changedText && <p>see you</p>}
+      {changedText && <p>changed!</p>}
+      <button onClick={changeTextHandler}>changed</button>
+    </div>
+  );
+};
+
+export default Greeting;
+```
+
+```jsx
+import { render, screen } from "@testing-library/react";
+import Greeting from "./Greeting";
+import userEvent from "@testing-library/user-event";
+
+describe("Greeting component", () => {
+  test("renders Hello World as a test", () => {
+    // Arrange
+    render(<Greeting />);
+
+    // Act
+    // ... nothing
+
+    // Assert
+    const helloWorldElement = screen.getByText("hello World", { exact: false });
+    expect(helloWorldElement).toBeInTheDocument();
+  });
+
+  test("renders see you as a test", () => {
+    render(<Greeting />);
+    const seeyouElement = screen.getByText("see you", { exact: false });
+    expect(seeyouElement).toBeInTheDocument();
+  });
+
+  // 버튼을 클릭했을 때 'changed' 텍스트가 보여야 하는 경우 테스트
+  test("button was clicked", () => {
+    // Arrange
+    render(<Greeting />);
+
+    // Act
+    const buttonElement = screen.getByRole("button");
+    userEvent.click(buttonElement);
+
+    // Assert
+    const changedElement = screen.getByText("changed!");
+    expect(changedElement).toBeInTheDocument();
+  });
+
+  // 버튼을 클릭했을 때 'see you' 텍스트가 보이지 않아야 하는 경우 테스트
+  test("does not render 'see you' button was clicked", () => {
+    render(<Greeting />);
+    const buttonElement = screen.getByRole("button");
+    userEvent.click(buttonElement);
+    const changedElement = screen.queryByText("see you", { exact: false });
+    expect(changedElement).toBeNull();
+  });
+});
+```
+
+- describe > 비슷한 성격의 test 함수들을 그룹화 할 수 있다.
+- screen > 렌더링된 가상 DOM에 접근할 수 있도록 해준다.
+- expect > 테스트 결괏값을 전달할 수 있다. 숫자, 문자열 구분 없이 뭐든 될 수 있다.
+- toBeInTheDocument() > 문서 안에 있는지 확인한다.
+- { exact: false } > 테스트에서는 정확하게 같은 걸 찾는데, 위의 경우에선 느낌표 하나가 다르기 때문에 테스트가 통과되지 않는다. 조금 더 유하게 테스트를 통과시키고 싶을 때 작성하면 된다.
+- getByRole : DOM의 엘리먼트를 선택한다.
+- userEvent > 실제 화면에서 사용자 이벤트를 작동 시키도록 돕는 객체이다.
+- userEvent.click() > click은 요소를 매개변수로 받는다.
+- queryByText > 엘리먼트가 찾아지지 않을 경우 null을 반환한다.
+- toBeNull > null인지 확인한다.
+<br />
+<br />
+
+### setupTests.js
+
+설정 작업을 한다.
+
+```tsx
+// jest-dom adds custom jest matchers for asserting on DOM nodes.
+// allows you to do things like:
+// expect(element).toHaveTextContent(/react/i)
+// learn more: https://github.com/testing-library/jest-dom
+import '@testing-library/jest-dom';
+```
+<br />
+<br />
+
+### package.json
+
+test script를 찾을 수 있다.
+
+```jsx
+"scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+},
+```
+
+- 터미널에 `npm test` 라고 작성하면 이런 화면을 볼 수 있다.
+    
+  <img src="https://s3.us-west-2.amazonaws.com/secure.notion-static.com/c243a93c-1841-4f35-80f8-a6ac0d26e89b/Untitled.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20220719%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20220719T082107Z&X-Amz-Expires=86400&X-Amz-Signature=0eede58ca689307a74d54febf0c2b0e3e2cae0543d7817aead9c83ac7fbcaa62&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%22Untitled.png%22&x-id=GetObject" />
+    
+- renders learn react link > 내가 작성했었던 test의 첫 번째 인자이다.
+- Test Suites > test.js에서 describe으로 묶었던 test들의 그룹이다.
+- Tests > test 함수 각각을 말한다.
+- a를 누르면 .test.js로 끝나는 파일을 찾고, 정의된 모든 테스트 함수를 실행한다.
+<br />
+<br />
+
+### 하위 컴포넌트의 테스트
+
+상태나 별다른 로직이 없는 경우 테스트를 이전과 같이 유지할 수 있다.
+
+그러나 그렇지 않다면 테스트를 분리하는 것이 좋다.
+<br />
+<br />
+
+### 비동기 코드의 테스트
+
+<img src="https://s3.us-west-2.amazonaws.com/secure.notion-static.com/6d1f17a5-f827-44cc-b732-3256db0b62d8/Untitled.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20220719%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20220719T082150Z&X-Amz-Expires=86400&X-Amz-Signature=873dcb7d9520f99c3492cad7e870a41176f2a328340c0fefb140eae380527152&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%22Untitled.png%22&x-id=GetObject" />
+
+<br />
+<br />
+
+```jsx
+import { useEffect, useState } from "react";
+
+const Async = () => {
+  const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    fetch("https://jsonplaceholder.typicode.com/posts")
+      .then((response) => response.json())
+      .then((data) => {
+        setPosts(data);
+      });
+  }, []);
+
+  return (
+    <div>
+      <ul>
+        {posts.map((post) => (
+          <li key={post.id}>{post.title}</li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+export default Async;
+```
+
+```jsx
+import { render, screen } from "@testing-library/react";
+import Async from "./Async";
+
+describe("Async component", () => {
+  test("renders posts if request succeeds", async () => {
+    render(<Async />);
+
+    const listItemElements = await screen.findAllByRole("listitem");
+    expect(listItemElements).not.toHaveLength(0);
+  });
+});
+```
+
+- 여기서는 queryByText처럼 하나만 선택하는 것을 사용하기 어려운데, li가 하나가 아니라 여러 개이기 때문이다.
+- findAllByRole() : find 쿼리들은 프로미스를 반환한다.
+    - 첫 번째 인자는 찾을 요소
+    - 두 번째 인자는 exact 등을 설정하는 객체
+    - 세 번째 인자는 timeout 등을 설정할 수 있는 객체이고, timeout의 default는 1초이다.
+    - 프로미스를 반환하기 때문에 async, await을 추가해주어야 한다. 위처럼 작성하면 테스트 러너 jest는 프로미스를(테스트가 끝나기를) 기다린다.
+<br />
+<br />
+
+### 가짜 http 요청을 전송해 테스트하기
+개발 과정에서 테스트를 진행할 때 서버에 http 요청을 전송하진 않는다.
+
+- 많은 네트워크 트래픽을 일으켜서 서버가 과부하될 가능성이 있다.
+- 데이터베이스에 테스트로 인한 데이터가 삽입되거나 서버의 내용이 변경될 수 있다.
+<br />
+
+위와 같은 이유로 테스트를 작성할 때 보통 진행하는 방식은 두 가지가 있다.
+
+- 요청을 전송하지 않는다.
+- 일종의 테스팅 서버로 요청을 전송한다.
+<br />
+
+```jsx
+import { render, screen } from "@testing-library/react";
+import Async from "./Async";
+
+describe("Async component", () => {
+  test("renders posts if request succeeds", async () => {
+    window.fetch = jest.fn();
+    window.fetch.mockResolvedValueOnce({
+      json: async () => [{ id: "p1", title: "First post" }],
+    });
+    render(<Async />);
+
+    const listItemElements = await screen.findAllByRole("listitem");
+    expect(listItemElements).not.toHaveLength(0);
+  });
+});
+```
+
+- 내장 fetch 함수를 다른 함수로 덮어씌운다.
+- jest 객체는 테스팅 코드 내에서 전역적으로 활용 가능하다.
+- fn() > mock 함수(더미 함수)를 만든다.
+- mockResolvedValueOnce() > fetch 함수가 호출되었을 때 결정되어야 하는 값을 설정할 수 있게 해준다.
